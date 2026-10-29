@@ -38,7 +38,7 @@ enabled = true
 # dashboard value on every deploy, even with keep_vars. Set them in the
 # dashboard, or in wrangler.production.toml. Example values for local development:
 [vars]
-ACCESS_TEAM_DOMAIN = "ncode.cloudflareaccess.com"
+ACCESS_TEAM_DOMAIN = "ncodeglobal.cloudflareaccess.com"
 TURNSTILE_SITE_KEY = "0x4AAAAAAFqo9l0fxvJ_hwbY"
 EMAIL_FROM = "Invoices <invoices@notify.ncode.global>"
 APP_ORIGIN = "https://invoices.ncode.global"
