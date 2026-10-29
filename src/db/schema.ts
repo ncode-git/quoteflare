@@ -109,6 +109,8 @@ export const settings = sqliteTable(
       .notNull()
       .default(false),
     paymentTermDays: integer('payment_term_days').notNull().default(14),
+    calculatorTitle: text('calculator_title').notNull().default(''),
+    calculatorDescription: text('calculator_description').notNull().default(''),
   },
   (t) => [
     check('settings_single_row', sql`${t.id} = 'main'`),

@@ -31,6 +31,8 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import {
   CURRENCIES,
+  DEFAULT_CALCULATOR_DESCRIPTION,
+  DEFAULT_CALCULATOR_TITLE,
   settingsSchema,
   type SettingsFormValues,
 } from '#/lib/settings'
@@ -164,6 +166,52 @@ export function SettingsForm({ initial }: { initial: SettingsFormValues }) {
                           onBlur={field.handleBlur}
                           onChange={(e) => field.handleChange(e.target.value)}
                         />
+                        {invalid && <FieldError errors={errors} />}
+                      </Field>
+                    )
+                  }}
+                </form.Field>
+              </FieldGroup>
+            </FieldSet>
+            <FieldSet className="rounded-lg border p-4">
+              <FieldLegend>Public calculator</FieldLegend>
+              <FieldDescription>
+                The heading and browser tab title on the page clients use to
+                build an estimate.
+              </FieldDescription>
+              <FieldGroup>
+                {text(
+                  'calculatorTitle',
+                  'Title',
+                  { placeholder: DEFAULT_CALCULATOR_TITLE },
+                  'Leave empty to use the default.',
+                )}
+                <form.Field name="calculatorDescription">
+                  {(field) => {
+                    const errors = fieldErrors(
+                      field.name,
+                      field.state.meta.errors,
+                    )
+                    const invalid = errors.length > 0
+                    return (
+                      <Field data-invalid={invalid}>
+                        <FieldLabel htmlFor="calculatorDescription">
+                          Description
+                        </FieldLabel>
+                        <Textarea
+                          id="calculatorDescription"
+                          name="calculatorDescription"
+                          rows={2}
+                          placeholder={DEFAULT_CALCULATOR_DESCRIPTION}
+                          value={field.state.value}
+                          aria-invalid={invalid}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                        />
+                        <FieldDescription>
+                          Shown under the title and used as the search result
+                          description. Leave empty to use the default.
+                        </FieldDescription>
                         {invalid && <FieldError errors={errors} />}
                       </Field>
                     )

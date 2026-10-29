@@ -6,15 +6,12 @@ import { StepFooter } from './step-footer'
 import { StepNav } from './step-nav'
 import { Summary } from './summary'
 
-function Shell() {
+function Shell({ title, description }: PageText) {
   const { catalog, evaluation } = useCalculator()
   return (
     <div className="flex flex-col gap-8">
       <div className="container">
-        <PageHeader
-          title="Price calculator"
-          description="Work through the steps. The estimate updates as you choose."
-        />
+        <PageHeader title={title} description={description} />
       </div>
       <StepNav />
       <div className="container pb-20 lg:pb-0">
@@ -34,10 +31,16 @@ function Shell() {
   )
 }
 
-export function CalculatorLayout({ catalog }: { catalog: CalculatorCatalog }) {
+type PageText = { title: string; description: string }
+
+export function CalculatorLayout({
+  catalog,
+  title,
+  description,
+}: PageText & { catalog: CalculatorCatalog }) {
   return (
     <CalculatorProvider catalog={catalog}>
-      <Shell />
+      <Shell title={title} description={description} />
     </CalculatorProvider>
   )
 }

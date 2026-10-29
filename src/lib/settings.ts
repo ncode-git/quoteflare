@@ -16,6 +16,10 @@ export const CURRENCIES = [
 
 export const DEFAULT_CURRENCY = 'USD'
 
+export const DEFAULT_CALCULATOR_TITLE = 'Price calculator'
+export const DEFAULT_CALCULATOR_DESCRIPTION =
+  'Work through the steps. The estimate updates as you choose.'
+
 export const LOGO_MAX_BYTES = 1024 * 1024
 
 export const LOGO_TYPES = {
@@ -102,6 +106,14 @@ export const settingsSchema = z.strictObject({
     .regex(/^\d{1,3}$/, 'Enter a whole number of days')
     .transform(Number)
     .refine((n) => n <= 365, 'Use 365 days or fewer'),
+  calculatorTitle: z
+    .string()
+    .trim()
+    .max(80, 'Title must be 80 characters or fewer'),
+  calculatorDescription: z
+    .string()
+    .trim()
+    .max(300, 'Description must be 300 characters or fewer'),
   sendReminders: z.boolean(),
 })
 

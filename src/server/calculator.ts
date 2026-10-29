@@ -1,12 +1,20 @@
-import { DEFAULT_CURRENCY } from '#/lib/settings'
+import {
+  DEFAULT_CALCULATOR_DESCRIPTION,
+  DEFAULT_CALCULATOR_TITLE,
+  DEFAULT_CURRENCY,
+} from '#/lib/settings'
 import type { Db } from '#/db'
 import type { CalculatorCatalog } from '#/lib/calculator'
 import { listPackageCategories, listPackages } from './packages'
 import { listCategories, listServices } from './services'
 
-export async function loadCalculatorCatalog(
-  db: Db,
-): Promise<CalculatorCatalog & { businessName: string }> {
+export async function loadCalculatorCatalog(db: Db): Promise<
+  CalculatorCatalog & {
+    businessName: string
+    pageTitle: string
+    pageDescription: string
+  }
+> {
   const [services, categories, packageCategories, packages, settings] =
     await Promise.all([
       listServices(db, 'active'),
@@ -19,6 +27,9 @@ export async function loadCalculatorCatalog(
 
   return {
     businessName: settings?.businessName ?? '',
+    pageTitle: settings?.calculatorTitle || DEFAULT_CALCULATOR_TITLE,
+    pageDescription:
+      settings?.calculatorDescription || DEFAULT_CALCULATOR_DESCRIPTION,
     currency: settings?.currency ?? DEFAULT_CURRENCY,
     taxRateBps: settings?.taxRateBps ?? 0,
     categories,

@@ -3,11 +3,23 @@ import { getCalculatorCatalog } from '#/server/calculator-actions'
 import { CalculatorLayout } from './-components/calculator-layout'
 
 export const Route = createFileRoute('/_site/_calculator')({
-  head: () => ({ meta: [{ title: 'Price calculator' }] }),
   loader: () => getCalculatorCatalog(),
+  head: ({ loaderData }) => ({
+    meta: [
+      { title: loaderData?.pageTitle },
+      { name: 'description', content: loaderData?.pageDescription },
+    ],
+  }),
   component: CalculatorRoute,
 })
 
 function CalculatorRoute() {
-  return <CalculatorLayout catalog={Route.useLoaderData()} />
+  const catalog = Route.useLoaderData()
+  return (
+    <CalculatorLayout
+      catalog={catalog}
+      title={catalog.pageTitle}
+      description={catalog.pageDescription}
+    />
+  )
 }

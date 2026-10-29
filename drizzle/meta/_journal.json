@@ -92,6 +92,13 @@
       "when": 1793175206013,
       "tag": "0012_add_package_categories",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1793268151581,
+      "tag": "0013_add_calculator_text",
+      "breakpoints": true
     }
   ]
 }

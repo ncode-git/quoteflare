@@ -34,6 +34,8 @@ const emptySettings: SettingsFormValues = {
   bankSwiftCode: '',
   paymentInstructions: '',
   paymentTermDays: '14',
+  calculatorTitle: '',
+  calculatorDescription: '',
   sendReminders: false,
 }
 
@@ -56,6 +58,8 @@ export async function loadSettings(db: Db) {
     bankSwiftCode: row.bankSwiftCode,
     paymentInstructions: row.paymentInstructions,
     paymentTermDays: String(row.paymentTermDays),
+    calculatorTitle: row.calculatorTitle,
+    calculatorDescription: row.calculatorDescription,
     sendReminders: row.sendReminders,
   }
   return { values, logoKey: row.logoKey }
@@ -87,6 +91,8 @@ export async function saveSettings(db: Db, data: SettingsData) {
     bankSwiftCode: data.bankSwiftCode,
     paymentInstructions: data.paymentInstructions,
     paymentTermDays: data.paymentTermDays,
+    calculatorTitle: data.calculatorTitle,
+    calculatorDescription: data.calculatorDescription,
     sendReminders: data.sendReminders,
   }
   await db
