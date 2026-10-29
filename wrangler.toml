@@ -37,12 +37,12 @@ enabled = true
 # Do not uncomment these for a real deployment: a var listed here overwrites the
 # dashboard value on every deploy, even with keep_vars. Set them in the
 # dashboard, or in wrangler.production.toml. Example values for local development:
-# [vars]
-# ACCESS_TEAM_DOMAIN = ""
-# TURNSTILE_SITE_KEY = "1x00000000000000000000AA"  # Cloudflare always-pass test key
-# EMAIL_FROM = ""  # a domain verified in Resend
-# APP_ORIGIN = "http://localhost:3000"  # base URL for invoice links in cron emails
-# ALLOWED_ORIGINS = "http://localhost:3000,http://localhost:5173"  # comma separated, for /api/public/*
+[vars]
+ACCESS_TEAM_DOMAIN = "ncode.cloudflareaccess.com"
+TURNSTILE_SITE_KEY = "0x4AAAAAAFqo9l0fxvJ_hwbY"
+EMAIL_FROM = "Invoices <invoices@notify.ncode.global>"
+APP_ORIGIN = "https://invoices.ncode.global"
+ALLOWED_ORIGINS = "https://invoices.ncode.global"
 
 # When you create the D1 database yourself, add database_id.
 [[d1_databases]]
@@ -54,9 +54,9 @@ migrations_dir = "drizzle"
 # before you can use it. Leave this block commented out to deploy without one.
 # The logo upload then disappears from /admin/settings. To turn it on, create the
 # bucket with `bunx wrangler r2 bucket create quoteflare` and uncomment these lines.
-[[r2_buckets]]
-binding = "FILES"
-bucket_name = "quoteflare"
+# [[r2_buckets]]
+# binding = "FILES"
+# bucket_name = "quoteflare"
 
 # Per-IP limits on the public endpoints.
 [[ratelimits]]
