@@ -81,7 +81,7 @@ export async function runRecurringSchedules(
         db
           .insert(invoices)
           .select(
-            sql`select ${invoiceId}, ${number}, ${schedule.clientId}, 'draft', ${today}, ${addDays(today, config.paymentTermDays)}, ${config.currency}, ${config.taxRateBps}, 0, null, null, null, null, null, null, strftime('%Y-%m-%dT%H:%M:%fZ', 'now') where ${claimed}`,
+            sql`select ${invoiceId}, ${number}, ${schedule.clientId}, 'draft', ${today}, ${addDays(today, config.paymentTermDays)}, ${config.currency}, ${config.taxRateBps}, 0, null, null, null, null, '', '', null, null, strftime('%Y-%m-%dT%H:%M:%fZ', 'now') where ${claimed}`,
           )
           .returning({ id: invoices.id }),
         ...schedule.items.map((item, index) =>

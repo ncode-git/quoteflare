@@ -22,7 +22,6 @@ function Shell({ title, description }: PageText) {
           </div>
           <Summary
             breakdown={evaluation.breakdown}
-            currency={catalog.currency}
             taxRateBps={catalog.taxRateBps}
           />
         </div>

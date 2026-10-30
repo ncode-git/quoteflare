@@ -7,6 +7,7 @@ const valid = {
   email: 'billing@acme.example',
   replyToEmail: 'hello@acme.example',
   currency: 'USD',
+  approvedCurrencies: [],
   taxRate: '7.5',
   invoicePrefix: 'INV',
   nextInvoiceNumber: '12',

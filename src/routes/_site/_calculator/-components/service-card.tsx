@@ -14,14 +14,15 @@ import {
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import type { CalculatorService, ChosenService } from '#/lib/calculator'
-import { bpsToPercent, formatMinor } from '#/lib/decimal'
+import { bpsToPercent } from '#/lib/decimal'
 import { BILLING_LABELS } from '#/lib/services'
+import { useCalculator } from './calculator-context'
 
 type Option = CalculatorService['options'][number]
 
-const optionPrice = (option: Option, currency: string) =>
+const optionPrice = (option: Option, money: (minor: number) => string) =>
   option.modifierType === 'flat'
-    ? `+${formatMinor(option.modifierValue, currency)}`
+    ? `+${money(option.modifierValue)}`
     : `+${bpsToPercent(option.modifierValue)}%`
 
 const estimate = (service: CalculatorService) => {
@@ -34,7 +35,6 @@ const estimate = (service: CalculatorService) => {
 
 export function ServiceCard({
   service,
-  currency,
   choice,
   problems,
   requiredBy,
@@ -43,7 +43,6 @@ export function ServiceCard({
   onChange,
 }: {
   service: CalculatorService
-  currency: string
   choice: ChosenService | undefined
   problems: string[]
   requiredBy: string[]
@@ -51,6 +50,7 @@ export function ServiceCard({
   onToggle: (checked: boolean) => void
   onChange: (patch: Partial<ChosenService>) => void
 }) {
+  const { money } = useCalculator()
   const checked = Boolean(choice)
   const locked = requiredBy.length > 0
   const single = service.maxQuantity === 1
@@ -101,7 +101,7 @@ export function ServiceCard({
               <span className="font-medium">{service.name}</span>
               <span className="text-sm text-muted-foreground">
                 {service.pricingMode === 'custom' && 'From '}
-                {`${formatMinor(service.unitPrice, currency)} / ${service.unitLabel}`}
+                {`${money(service.unitPrice)} / ${service.unitLabel}`}
                 {recurring &&
                   `, ${BILLING_LABELS[service.billing].toLowerCase()}`}
               </span>
@@ -188,7 +188,7 @@ export function ServiceCard({
                           <FieldLabel htmlFor={`${id}-${option.id}`}>
                             {option.name}
                             <span className="ml-auto text-muted-foreground">
-                              {optionPrice(option, currency)}
+                              {optionPrice(option, money)}
                             </span>
                           </FieldLabel>
                         </Field>
@@ -205,7 +205,7 @@ export function ServiceCard({
                         <FieldLabel htmlFor={`${id}-${option.id}`}>
                           {option.name}
                           <span className="ml-auto text-muted-foreground">
-                            {optionPrice(option, currency)}
+                            {optionPrice(option, money)}
                           </span>
                         </FieldLabel>
                       </Field>
@@ -230,7 +230,7 @@ export function ServiceCard({
                       <FieldLabel htmlFor={`${id}-${option.id}`}>
                         {option.name}
                         <span className="ml-auto text-muted-foreground">
-                          {optionPrice(option, currency)}
+                          {optionPrice(option, money)}
                         </span>
                       </FieldLabel>
                     </Field>

@@ -213,9 +213,12 @@ function ServicesPage() {
           <DataTableColumnHeader column={column} label="Status" />
         ),
         cell: ({ row }) => (
-          <Badge variant={row.original.active ? 'default' : 'secondary'}>
-            {row.original.active ? 'Active' : 'Archived'}
-          </Badge>
+          <div className="flex items-center gap-1">
+            <Badge variant={row.original.active ? 'default' : 'secondary'}>
+              {row.original.active ? 'Active' : 'Archived'}
+            </Badge>
+            {row.original.isPrivate && <Badge variant="outline">Private</Badge>}
+          </div>
         ),
         meta: {
           label: 'Status',

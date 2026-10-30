@@ -3,6 +3,7 @@ import { createDb, schema, type Db } from '#/db'
 import { createTestD1 } from '#/db/test-db'
 import { createId, isCuid } from '#/lib/id'
 import { serviceSchema } from '#/lib/services'
+import { loadCalculatorCatalog } from './calculator'
 import {
   listCategories,
   listServices,
@@ -45,6 +46,7 @@ const form = {
   maxQuantity: '',
   quantityStep: '1',
   taxable: true,
+  isPrivate: false,
   estimatedDaysMin: '',
   estimatedDaysMax: '',
   requires: [] as string[],
@@ -496,5 +498,43 @@ describe('reordering', () => {
     expect((await reorderServices(db, [a, a])).ok).toBe(false)
     expect((await reorderServices(db, [b, createId()])).ok).toBe(false)
     expect(await names()).toEqual(['A', 'B'])
+  })
+})
+
+describe('private services', () => {
+  it('defaults to public and saves the flag', async () => {
+    const a = await create('A')
+    const b = await create('B', { isPrivate: true })
+    const rows = await listServices(db, 'all')
+    expect(rows.find((r) => r.id === a)?.isPrivate).toBe(false)
+    expect(rows.find((r) => r.id === b)?.isPrivate).toBe(true)
+  })
+
+  it('keeps private services and packages out of the public catalog', async () => {
+    await create('Public')
+    const hidden = await create('Hidden', { isPrivate: true })
+    await db.insert(schema.packages).values([
+      { id: createId(), name: 'Open pack' },
+      { id: createId(), name: 'Secret pack', isPrivate: true },
+    ])
+    const packageIds = (await db.select().from(schema.packages)).map(
+      (p) => p.id,
+    )
+    await db.insert(schema.packageItems).values(
+      packageIds.map((packageId) => ({
+        packageId,
+        serviceId: hidden,
+        quantity: 1,
+        optionIds: [],
+      })),
+    )
+
+    const catalog = await loadCalculatorCatalog(db)
+    expect(catalog.services.map((s) => s.name)).toEqual(['Public'])
+    expect(catalog.packages).toEqual([])
+    expect((await listServices(db, 'active')).map((s) => s.name)).toEqual([
+      'Public',
+      'Hidden',
+    ])
   })
 })

@@ -18,7 +18,6 @@ import {
   type CalculatorCatalog,
   type CalculatorPackage,
 } from '#/lib/calculator'
-import { formatMinor } from '#/lib/decimal'
 import { SCRATCH, useCalculator } from './-components/calculator-context'
 import { ALL_CATEGORIES, CategoryFilter } from './-components/category-filter'
 
@@ -28,14 +27,14 @@ export const Route = createFileRoute('/_site/_calculator/')({
 
 const describePrice = (
   price: { total: number; recurring: number; partial: boolean },
-  currency: string,
+  money: (minor: number) => string,
 ) => {
   const parts = []
   if (price.total > 0 || price.recurring === 0) {
-    parts.push(formatMinor(price.total, currency))
+    parts.push(money(price.total))
   }
   if (price.recurring > 0) {
-    parts.push(`${formatMinor(price.recurring, currency)} recurring`)
+    parts.push(`${money(price.recurring)} recurring`)
   }
   return `${price.partial ? 'From ' : ''}${parts.join(' + ')}`
 }
@@ -70,7 +69,7 @@ function groupByCategory(catalog: CalculatorCatalog): Section[] {
 }
 
 function PackageStep() {
-  const { catalog, state, chosen, choose } = useCalculator()
+  const { catalog, state, chosen, choose, money } = useCalculator()
   const navigate = useNavigate()
   const [pending, setPending] = useState<string | null>(null)
 
@@ -143,7 +142,7 @@ function PackageStep() {
                       const name = names.get(i.serviceId) ?? ''
                       return i.quantity > 1 ? `${name} x${i.quantity}` : name
                     })}
-                    price={price && describePrice(price, catalog.currency)}
+                    price={price && describePrice(price, money)}
                     action="Choose package"
                     onSelect={() => pick(pkg.id)}
                   />

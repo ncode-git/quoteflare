@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
-import { bpsToPercent, formatMinor } from '#/lib/decimal'
+import { bpsToPercent } from '#/lib/decimal'
 import type { PricingBreakdown } from '#/lib/pricing'
 import { BILLING_LABELS } from '#/lib/services'
+import { useCalculator } from './calculator-context'
+import { CurrencyPicker } from './currency-picker'
 
 function Row({
   label,
@@ -32,14 +34,12 @@ function Row({
 
 export function Summary({
   breakdown,
-  currency,
   taxRateBps,
 }: {
   breakdown: PricingBreakdown
-  currency: string
   taxRateBps: number
 }) {
-  const money = (minor: number) => formatMinor(minor, currency)
+  const { money, catalog, displayCurrency } = useCalculator()
   const { recurring } = breakdown
   const hasRecurring = recurring.lines.length > 0
   const { pathname } = useLocation()
@@ -53,6 +53,7 @@ export function Summary({
             <CardTitle>Your estimate</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
+            <CurrencyPicker />
             <dl className="flex flex-col gap-2">
               {breakdown.lines.map((line) => (
                 <div
@@ -106,6 +107,12 @@ export function Summary({
                   <Row label="Recurring total" value={money(recurring.total)} />
                 </dl>
               </>
+            )}
+            {displayCurrency !== catalog.currency && (
+              <p className="text-xs text-muted-foreground">
+                Converted from {catalog.currency} at today&apos;s rate. Your
+                quote is issued in {catalog.currency}.
+              </p>
             )}
             {onScope && (
               <Button nativeButton={false} render={<Link to="/review" />}>

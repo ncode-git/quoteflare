@@ -30,6 +30,8 @@ export type CalculatorCatalog = {
   services: CalculatorService[]
   packages: CalculatorPackage[]
   currency: string
+  /** Rate from `currency` to each currency the customer may view prices in. */
+  rates: Record<string, number>
   taxRateBps: number
 }
 

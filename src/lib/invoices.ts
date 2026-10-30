@@ -115,6 +115,24 @@ export const invoiceSchema = z
         `Enter a percentage from ${MIN_ADVANCE_PERCENT} to ${MAX_ADVANCE_PERCENT}, or leave it empty`,
       )
       .transform((value) => (value === '' ? null : percentToBps(value))),
+    notes: z
+      .string()
+      .trim()
+      .max(2000, 'Notes must be 2000 characters or fewer')
+      .default(''),
+    paymentLink: z
+      .string()
+      .trim()
+      .max(2000, 'Payment link must be 2000 characters or fewer')
+      .refine((value) => {
+        if (value === '') return true
+        try {
+          return new URL(value).protocol === 'https:'
+        } catch {
+          return false
+        }
+      }, 'Enter a full link starting with https://')
+      .default(''),
     items: z
       .array(invoiceItemSchema)
       .min(1, 'Add at least one line item')

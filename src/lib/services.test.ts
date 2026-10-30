@@ -14,6 +14,7 @@ const base = {
   maxQuantity: '',
   quantityStep: '1',
   taxable: true,
+  isPrivate: false,
   estimatedDaysMin: '',
   estimatedDaysMax: '',
   requires: [],

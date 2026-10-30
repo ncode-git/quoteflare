@@ -92,6 +92,10 @@ export const settings = sqliteTable(
     email: text('email').notNull().default(''),
     replyToEmail: text('reply_to_email').notNull().default(''),
     currency: text('currency').notNull().default('USD'),
+    approvedCurrencies: text('approved_currencies', { mode: 'json' })
+      .$type<string[]>()
+      .notNull()
+      .default(sql`'[]'`),
     taxRateBps: integer('tax_rate_bps').notNull().default(0),
     invoicePrefix: text('invoice_prefix').notNull().default('INV'),
     nextInvoiceNumber: integer('next_invoice_number').notNull().default(1),
@@ -151,6 +155,9 @@ export const services = sqliteTable(
     estimatedDaysMin: real('estimated_days_min'),
     estimatedDaysMax: real('estimated_days_max'),
     active: integer('active', { mode: 'boolean' }).notNull().default(true),
+    isPrivate: integer('is_private', { mode: 'boolean' })
+      .notNull()
+      .default(false),
     sortOrder: integer('sort_order').notNull().default(0),
   },
   (t) => [
@@ -233,6 +240,9 @@ export const packages = sqliteTable(
     name: text('name').notNull(),
     description: text('description').notNull().default(''),
     active: integer('active', { mode: 'boolean' }).notNull().default(true),
+    isPrivate: integer('is_private', { mode: 'boolean' })
+      .notNull()
+      .default(false),
     sortOrder: integer('sort_order').notNull().default(0),
   },
   (t) => [
@@ -324,6 +334,10 @@ export const invoices = sqliteTable(
     // Share of the total billed up front, in basis points. Null means no advance.
     advanceBps: integer('advance_bps'),
     advancePaidAt: text('advance_paid_at'),
+    // Plain text, may span several lines. Shown on the public invoice.
+    notes: text('notes').notNull().default(''),
+    // Hosted checkout URL (PayHere, Stripe, Payoneer). Empty means no link.
+    paymentLink: text('payment_link').notNull().default(''),
     sentAt: text('sent_at'),
     lastReminderAt: text('last_reminder_at'),
     createdAt: createdAt(),

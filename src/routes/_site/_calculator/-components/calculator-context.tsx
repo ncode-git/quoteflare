@@ -15,6 +15,8 @@ import {
   type ChosenService,
   type Evaluation,
 } from '#/lib/calculator'
+import { convertMinor, formatConverted } from '#/lib/currencies'
+import { formatMinor } from '#/lib/decimal'
 
 export const SCRATCH = 'scratch'
 
@@ -24,6 +26,11 @@ type CalculatorValue = {
   evaluation: Evaluation
   /** A package id, `SCRATCH`, or null before the customer has chosen. */
   chosen: string | null
+  /** The currency prices are shown in. Quotes are always issued in `catalog.currency`. */
+  displayCurrency: string
+  setDisplayCurrency: (currency: string) => void
+  /** Formats base-currency cents in the display currency. */
+  money: (minor: number) => string
   choose: (target: string) => void
   toggle: (id: string, checked: boolean) => void
   change: (id: string, patch: Partial<ChosenService>) => void
@@ -40,6 +47,11 @@ export function CalculatorProvider({
 }) {
   const [state, setState] = useState<CalculatorState>({})
   const [chosen, setChosen] = useState<string | null>(null)
+  const [picked, setPicked] = useState(catalog.currency)
+  const displayCurrency =
+    picked !== catalog.currency && catalog.rates[picked]
+      ? picked
+      : catalog.currency
   const evaluation = useMemo(() => evaluate(catalog, state), [catalog, state])
 
   const value = useMemo<CalculatorValue>(
@@ -48,6 +60,19 @@ export function CalculatorProvider({
       state,
       evaluation,
       chosen,
+      displayCurrency,
+      setDisplayCurrency: setPicked,
+      money: (minor) =>
+        displayCurrency === catalog.currency
+          ? formatMinor(minor, catalog.currency)
+          : formatConverted(
+              convertMinor(
+                minor,
+                catalog.rates[displayCurrency],
+                displayCurrency,
+              ),
+              displayCurrency,
+            ),
       choose: (target) => {
         const pkg = catalog.packages.find((p) => p.id === target)
         setState(pkg ? stateForPackage(catalog, pkg) : {})
@@ -65,7 +90,7 @@ export function CalculatorProvider({
           [id]: { ...current[id], ...patch },
         })),
     }),
-    [catalog, state, evaluation, chosen],
+    [catalog, state, evaluation, chosen, displayCurrency],
   )
 
   return (

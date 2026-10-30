@@ -48,6 +48,7 @@ const form = {
   maxQuantity: '',
   quantityStep: '1',
   taxable: true,
+  isPrivate: false,
   estimatedDaysMin: '',
   estimatedDaysMax: '',
   requires: [] as string[],

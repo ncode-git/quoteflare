@@ -62,6 +62,7 @@ const emptyValues: ServiceFormValues = {
   maxQuantity: '',
   quantityStep: '1',
   taxable: true,
+  isPrivate: false,
   estimatedDaysMin: '',
   estimatedDaysMax: '',
   requires: [],
@@ -86,6 +87,7 @@ const toFormValues = (service: ServiceRow): ServiceFormValues => ({
   maxQuantity: optionalNumber(service.maxQuantity),
   quantityStep: String(service.quantityStep),
   taxable: service.taxable,
+  isPrivate: service.isPrivate,
   estimatedDaysMin: optionalNumber(service.estimatedDaysMin),
   estimatedDaysMax: optionalNumber(service.estimatedDaysMax),
   requires: service.requires.map((r) => r.id),
@@ -335,6 +337,21 @@ function ServiceForm({
                 onCheckedChange={(checked) => field.handleChange(checked)}
               />
               <FieldLabel htmlFor="service-taxable">Taxable</FieldLabel>
+            </Field>
+          )}
+        </form.Field>
+
+        <form.Field name="isPrivate">
+          {(field) => (
+            <Field orientation="horizontal">
+              <Checkbox
+                id="service-private"
+                checked={field.state.value}
+                onCheckedChange={(checked) => field.handleChange(checked)}
+              />
+              <FieldLabel htmlFor="service-private">
+                Private (hide from the public calculator)
+              </FieldLabel>
             </Field>
           )}
         </form.Field>

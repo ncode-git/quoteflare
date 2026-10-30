@@ -1,19 +1,6 @@
 import { z } from 'zod'
 import { percentToBps } from './decimal'
 
-export const CURRENCIES = [
-  'USD',
-  'EUR',
-  'GBP',
-  'LKR',
-  'INR',
-  'AUD',
-  'CAD',
-  'NZD',
-  'SGD',
-  'AED',
-] as const
-
 export const DEFAULT_CURRENCY = 'USD'
 
 export const DEFAULT_CALCULATOR_TITLE = 'Price calculator'
@@ -57,6 +44,9 @@ export const settingsSchema = z.strictObject({
       'Enter a valid email address',
     ),
   currency: z.string().regex(/^[A-Z]{3}$/, 'Use a three-letter currency code'),
+  approvedCurrencies: z
+    .array(z.string().regex(/^[A-Z]{3}$/, 'Use three-letter currency codes'))
+    .max(30, 'Approve 30 currencies or fewer'),
   taxRate: z
     .string()
     .trim()

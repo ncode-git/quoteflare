@@ -27,6 +27,7 @@ export const packageSchema = z
       .trim()
       .max(500, 'Description must be 500 characters or fewer'),
     categoryId: z.string().trim(),
+    isPrivate: z.boolean(),
     items: z
       .array(itemSchema)
       .min(1, 'Add at least one service')

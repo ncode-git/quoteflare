@@ -22,15 +22,16 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+  MultiSelect,
+  MultiSelectContent,
+  MultiSelectItem,
+  MultiSelectTrigger,
+  MultiSelectValue,
+} from '@/components/ui/multi-select'
+import { SearchSelect } from '@/components/common/search-select'
 import { Textarea } from '@/components/ui/textarea'
+import { CURRENCY_OPTIONS } from '#/lib/currencies'
 import {
-  CURRENCIES,
   DEFAULT_CALCULATOR_DESCRIPTION,
   DEFAULT_CALCULATOR_TITLE,
   settingsSchema,
@@ -40,7 +41,18 @@ import { updateSettings } from '#/server/settings-actions'
 import { toast } from 'sonner'
 import { callAction, toastFormErrors } from '#/lib/action-errors'
 
-type FieldName = Exclude<keyof SettingsFormValues, 'sendReminders'>
+type FieldName = Exclude<
+  keyof SettingsFormValues,
+  'sendReminders' | 'approvedCurrencies'
+>
+
+function RequiredMark() {
+  return (
+    <span aria-hidden="true" className="text-red-500">
+      *
+    </span>
+  )
+}
 
 export function SettingsForm({ initial }: { initial: SettingsFormValues }) {
   const router = useRouter()
@@ -72,9 +84,10 @@ export function SettingsForm({ initial }: { initial: SettingsFormValues }) {
   ) =>
     serverErrors[name] ? [...errors, { message: serverErrors[name] }] : errors
 
-  const currencies = CURRENCIES.includes(initial.currency as never)
-    ? [...CURRENCIES]
-    : [initial.currency, ...CURRENCIES]
+  const currencyOptions = CURRENCY_OPTIONS.map((c) => ({
+    value: c.code,
+    label: `${c.code} - ${c.name}`,
+  }))
 
   const text = (
     name: FieldName,
@@ -88,7 +101,10 @@ export function SettingsForm({ initial }: { initial: SettingsFormValues }) {
         const invalid = errors.length > 0
         return (
           <Field data-invalid={invalid}>
-            <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
+            <FieldLabel htmlFor={field.name}>
+              {label}
+              {props.required && <RequiredMark />}
+            </FieldLabel>
             <Input
               id={field.name}
               name={field.name}
@@ -132,6 +148,7 @@ export function SettingsForm({ initial }: { initial: SettingsFormValues }) {
               </FieldDescription>
               <FieldGroup className="md:grid md:grid-cols-2">
                 {text('businessName', 'Business name', {
+                  required: true,
                   autoComplete: 'organization',
                   placeholder: 'Acme Studio',
                 })}
@@ -228,44 +245,95 @@ export function SettingsForm({ initial }: { initial: SettingsFormValues }) {
                 <form.Field name="currency">
                   {(field) => (
                     <Field>
-                      <FieldLabel htmlFor="currency">Currency</FieldLabel>
-                      <Select
+                      <FieldLabel htmlFor="currency">
+                        Base currency
+                        <RequiredMark />
+                      </FieldLabel>
+                      <SearchSelect
+                        id="currency"
                         value={field.state.value}
-                        onValueChange={(v) => v && field.handleChange(v)}
-                      >
-                        <SelectTrigger id="currency" className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {currencies.map((code) => (
-                            <SelectItem key={code} value={code}>
-                              {code}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        options={currencyOptions}
+                        placeholder="Search currencies"
+                        emptyText="No currency found."
+                        onValueChange={field.handleChange}
+                      />
+                      <FieldDescription>
+                        Prices, invoices and quotes are in this currency.
+                      </FieldDescription>
                     </Field>
                   )}
                 </form.Field>
+                <form.Subscribe selector={(s) => s.values.currency}>
+                  {(base) => (
+                    <form.Field name="approvedCurrencies">
+                      {(field) => (
+                        <Field>
+                          <FieldLabel htmlFor="approvedCurrencies">
+                            Approved currencies
+                          </FieldLabel>
+                          <MultiSelect
+                            values={field.state.value.filter((c) => c !== base)}
+                            onValuesChange={field.handleChange}
+                          >
+                            <MultiSelectTrigger
+                              id="approvedCurrencies"
+                              className="w-full"
+                            >
+                              <MultiSelectValue
+                                placeholder="None"
+                                overflowBehavior="cutoff"
+                              />
+                            </MultiSelectTrigger>
+                            <MultiSelectContent
+                              search={{
+                                placeholder: 'Search currencies',
+                                emptyMessage: 'No currency found.',
+                              }}
+                            >
+                              {CURRENCY_OPTIONS.filter(
+                                (c) => c.code !== base,
+                              ).map((c) => (
+                                <MultiSelectItem
+                                  key={c.code}
+                                  value={c.code}
+                                  badgeLabel={c.code}
+                                  keywords={[c.name]}
+                                >
+                                  {c.code} - {c.name}
+                                </MultiSelectItem>
+                              ))}
+                            </MultiSelectContent>
+                          </MultiSelect>
+                          <FieldDescription>
+                            Clients can view the calculator estimate in these
+                            currencies, converted at the daily rate from
+                            Frankfurter. Quotes stay in the base currency.
+                          </FieldDescription>
+                        </Field>
+                      )}
+                    </form.Field>
+                  )}
+                </form.Subscribe>
                 {text(
                   'taxRate',
                   'Tax rate (%)',
-                  { inputMode: 'decimal', placeholder: '15' },
+                  { required: true, inputMode: 'decimal', placeholder: '15' },
                   'Default for new invoices, for example 15 or 7.5.',
                 )}
                 {text('invoicePrefix', 'Invoice prefix', {
+                  required: true,
                   placeholder: 'INV',
                 })}
                 {text(
                   'nextInvoiceNumber',
                   'Next invoice number',
-                  { inputMode: 'numeric', placeholder: '1' },
+                  { required: true, inputMode: 'numeric', placeholder: '1' },
                   'Lowering this below a number already issued will cause a duplicate.',
                 )}
                 {text(
                   'paymentTermDays',
                   'Payment term (days)',
-                  { inputMode: 'numeric', placeholder: '14' },
+                  { required: true, inputMode: 'numeric', placeholder: '14' },
                   'Days between the issue date and the due date on recurring invoices.',
                 )}
                 <form.Field name="sendReminders">

@@ -120,6 +120,7 @@ export const serviceSchema = z
     maxQuantity: z.string().trim(),
     quantityStep: z.string().trim(),
     taxable: z.boolean(),
+    isPrivate: z.boolean(),
     estimatedDaysMin: z.string().trim(),
     estimatedDaysMax: z.string().trim(),
     requires: z

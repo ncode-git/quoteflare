@@ -52,6 +52,7 @@ const form = (items: unknown[], name = 'Starter', categoryId = '') => ({
   name,
   description: 'desc',
   categoryId,
+  isPrivate: false,
   items,
 })
 

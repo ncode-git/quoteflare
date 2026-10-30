@@ -17,6 +17,7 @@ export type PackageRow = {
   name: string
   description: string
   active: boolean
+  isPrivate: boolean
   sortOrder: number
   items: {
     serviceId: string
@@ -150,6 +151,7 @@ export async function savePackage(
     name: data.name,
     description: data.description,
     categoryId: data.categoryId,
+    isPrivate: data.isPrivate,
   }
   await batch(db, [
     data.id

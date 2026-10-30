@@ -149,6 +149,33 @@ function PublicInvoicePage() {
         />
       </div>
 
+      {invoice.paymentLink && invoice.status !== 'paid' && (
+        <section data-print-keep className="flex flex-col gap-2 text-sm">
+          <h3 className="font-medium">Pay online</h3>
+          <Button
+            className="self-start"
+            render={
+              <a
+                href={invoice.paymentLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            }
+          >
+            Pay now
+          </Button>
+        </section>
+      )}
+
+      {invoice.notes && (
+        <section data-print-keep className="flex flex-col gap-1 text-sm">
+          <h3 className="font-medium">Notes</h3>
+          <p className="whitespace-pre-line text-muted-foreground">
+            {invoice.notes}
+          </p>
+        </section>
+      )}
+
       {bankRows.length > 0 && (
         <section data-print-keep className="flex flex-col gap-1 text-sm">
           <h3 className="font-medium">Bank details</h3>

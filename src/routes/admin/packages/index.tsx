@@ -111,6 +111,7 @@ function PackagesPage() {
                     {pkg.categoryName && (
                       <Badge variant="outline">{pkg.categoryName}</Badge>
                     )}
+                    {pkg.isPrivate && <Badge variant="outline">Private</Badge>}
                     {!pkg.active && <Badge variant="secondary">Archived</Badge>}
                   </div>
                   {pkg.description && (

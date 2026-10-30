@@ -1,0 +1,1 @@
+ALTER TABLE `invoices` ADD `notes` text DEFAULT '' NOT NULL;

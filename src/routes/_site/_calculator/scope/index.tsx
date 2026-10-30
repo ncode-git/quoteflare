@@ -69,7 +69,6 @@ function ScopeStep() {
             <ServiceCard
               key={service.id}
               service={service}
-              currency={catalog.currency}
               choice={state[service.id]}
               problems={evaluation.problems[service.id] ?? []}
               requiredBy={catalog.services

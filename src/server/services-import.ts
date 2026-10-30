@@ -190,6 +190,7 @@ export async function importServices(
     maxQuantity: service.maxQuantity ?? '',
     quantityStep: service.quantityStep,
     taxable: service.taxable,
+    isPrivate: false,
     estimatedDaysMin: service.estimatedDays
       ? String(service.estimatedDays[0])
       : '',
@@ -264,6 +265,7 @@ export async function importServices(
     name: pkg.name,
     description: pkg.description,
     categoryId,
+    isPrivate: false,
     items: pkg.items.map((i) => ({
       serviceId: serviceKey(i.service),
       quantity: i.quantity,

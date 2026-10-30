@@ -47,6 +47,7 @@ const emptyValues: PackageFormValues = {
   name: '',
   description: '',
   categoryId: '',
+  isPrivate: false,
   items: [],
 }
 
@@ -55,6 +56,7 @@ const toFormValues = (pkg: PackageRow): PackageFormValues => ({
   name: pkg.name,
   description: pkg.description,
   categoryId: pkg.categoryId ?? '',
+  isPrivate: pkg.isPrivate,
   items: pkg.items.map((i) => ({
     serviceId: i.serviceId,
     quantity: String(i.quantity),
@@ -211,6 +213,20 @@ function PackageForm({
               </Field>
             )
           }}
+        </form.Field>
+        <form.Field name="isPrivate">
+          {(field) => (
+            <Field orientation="horizontal">
+              <Checkbox
+                id="package-private"
+                checked={field.state.value}
+                onCheckedChange={(checked) => field.handleChange(checked)}
+              />
+              <FieldLabel htmlFor="package-private">
+                Private (hide from the public calculator)
+              </FieldLabel>
+            </Field>
+          )}
         </form.Field>
       </FieldGroup>
 

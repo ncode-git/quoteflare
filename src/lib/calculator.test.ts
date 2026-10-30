@@ -40,6 +40,7 @@ const catalog = (
   packages: [],
   currency: 'USD',
   taxRateBps,
+  rates: {},
 })
 
 describe('selectService', () => {

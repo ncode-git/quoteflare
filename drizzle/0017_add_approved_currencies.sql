@@ -1,0 +1,1 @@
+ALTER TABLE `settings` ADD `approved_currencies` text DEFAULT '[]' NOT NULL;

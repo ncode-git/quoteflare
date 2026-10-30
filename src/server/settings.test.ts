@@ -35,6 +35,7 @@ const input = {
   email: '',
   replyToEmail: 'replies@acme.example',
   currency: 'EUR',
+  approvedCurrencies: ['USD', 'GBP'],
   taxRate: '7.25',
   invoicePrefix: 'ACM',
   nextInvoiceNumber: '5',
